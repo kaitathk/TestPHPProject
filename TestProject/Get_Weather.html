@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Insert title here</title>
+
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-1.8.2.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-ui-1.9.0.custom.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery.marquee.js"></script>
+
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui.css" />
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui-1.9.0.custom.min.css" />
+
+<style type="text/css"> 
+	body, html{margin:0;padding:0;}
+	#display{
+			 width:500px;
+			 margin-left:auto;
+			 margin-right:auto;
+			}
+	#warnmsg{
+			 overflow:hidden;
+			 background-color:#6F370F;
+			 color:yellow;
+			 font-size:24px;
+			 padding:3px 4px 4px 3px;
+			 }
+	#Weather{
+			 overflow:hidden;
+			 background-color:#6F370F;
+			 color:yellow;
+			 font-size:24px;
+			 padding:3px 4px 4px 3px;
+			 }
+	#regtemp{
+			overflow:hidden;
+			background-color:#6F370F;
+			color:yellow;
+			font-size:24px;
+			padding:3px 4px 4px 3px;
+			}
+			 
+</style>
+</head>
+<body>
+
+<script>
+$.support.cors = true;
+$(function(){
+/**
+			 $.ajax({url:"http://rss.weather.gov.hk/rss/CurrentWeather_big5.xml",
+					 dataType:"xml",
+					 type:"GET",
+//					 crossDomain:True,		
+					 error:function(jqXHR,Status,Error){
+						 alert("Loading XML document error - "+jqXHR.status+" -- Error : "+Error);},
+					 success:function(tmp1){showWeather(tmp1);}
+					 });
+**/
+		config_screen();
+		
+		var tmp=$.get("http://rss.weather.gov.hk/rss/CurrentWeather_big5.xml",
+				 function(data, error, xhr){show_getWeather(data, error, xhr);},
+				 "xml"	
+				 )
+				 .fail(function(xhr,textstatus,error){alert("Loading XML document error - "+xhr.status+" -- Error : "+error);})
+				 ;
+				 
+			 });
+
+function show_getWeather(data, error, xhr){
+	if (error=="success")
+	{
+		showWeather(data);
+	}	
+	else
+		{
+		alert("Loading XML document error - "+xhr.status+" -- Error : "+error);
+		}
+}
+
+function showWeather(tmp1){
+
+	var tmp4=tmp1.getElementsByTagName("item")[0].getElementsByTagName("description")[0].childNodes[0].nodeValue;
+
+	var tarray=tmp4.split('<br/>');
+
+	$("#Weather").text(tarray[0]);
+	$("#Weather").append("&nbsp;&nbsp;&nbsp;&nbsp;");
+	$("#Weather").append(tarray[1]);
+	$("#Weather").append("&nbsp;&nbsp;&nbsp;&nbsp;");
+	$("#Weather").append(tarray[2]);
+	
+	var warn=$("span#warning_message",tmp4).text();
+	$("#warnmsg").text(warn);
+	
+	var regtable=$("tbody",tmp4).html();
+	
+	var regtmparry=Array();
+	$("table tr",tmp4).each(function(i, v){
+		regtmparry[i]=$(this).text();
+	});
+	
+	var regstr=tarray[9]+"   ";
+	$.each(regtmparry, function(index,value){
+		regstr=regstr+this;
+	});
+	$("#regtemp").text(regstr);
+	
+	$("#Weather").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: true
+	});
+	
+	$("#regtemp").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: true
+	});
+	
+	$("#warnmsg").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: true
+	});
+	
+}
+
+function config_screen(){
+    var windowHeight
+    if (self.innerHeight) { // all except Explorer
+      windowHeight = self.innerHeight;
+    } else if (document.documentElement && document.documentElement.clientHeight) {
+      windowHeight = document.documentElement.clientHeight;
+    } else if (document.body) { // other Explorers
+      windowHeight = document.body.clientHeight;
+    }
+
+    var wh=windowHeight-$("#warnpic").height()-
+    					$("#warnmsg").height()-    
+    					$("#Weather").height()-    
+    					$("#regtemp").height();
+    $("#wrapper").height(wh);
+}
+
+</script>
+
+<div id="display">
+<div id="wrapper">&nbsp;</div>
+<div id="warnpic">&nbsp;</div>
+<div id="warnmsg">&nbsp;</div>
+<div id="Weather">&nbsp;</div>
+<div id="regtemp">&nbsp;</div>
+</div>
+
+</body>
+</html>

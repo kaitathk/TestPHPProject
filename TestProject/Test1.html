@@ -1,0 +1,98 @@
+<?xml version="1.0" encoding="BIG5" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=BIG5" />
+<title>Insert title here</title>
+
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-1.8.2.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-ui-1.9.0.custom.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery.marquee.js"></script>
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui.css" />
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui-1.9.0.custom.min.css" />
+
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery.li-scroller.1.0.js"></script>
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./js/li-scroller.css" />
+
+<style type="text/css"> 
+	#Weather{
+			 overflow:hidden;
+			 width:500px;
+			 margin-left:auto;
+			 margin-right:auto;
+			 background-color:#6F370F;
+			 color:yellow;
+			 font-size:24px;
+			 padding-top:4px;
+			 padding-bottom:4px;
+			 }
+
+</style>
+
+</head>
+<body>
+
+<script type="text/javascript">
+
+$(function(){
+// 	var dt=new Date();
+// 	var dd=dt.getDate();
+// 	var mm=dt.getMonth()+1
+// 	var yy=dt.getFullYear()
+// 	$("#Weather").text(dd+"/"+mm+"/"+yy);
+// 	$("#Weather").append("  "+dt.getHours()+":"+dt.getMinutes()+":"+dt.getSeconds())
+
+	$("#Weather").text(settime());
+	
+	var wt=$("#Weather").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: false
+	});
+
+	
+	$("ul#ticker01").liScroll();
+
+	$(wt).on("finished", function(){
+		$(this).stop();
+		$(this).find('.js-marquee-wrapper').text(settime());
+		$(this).animate();	
+	});
+	
+});
+
+function settime(){
+ 	var dt=new Date();
+	var dd=dt.getDate();
+	var mm=dt.getMonth()+1;
+	var yy=dt.getFullYear();
+// 	$("#Weather").text(dd+"/"+mm+"/"+yy);
+// 	$("#Weather").append("  "+dt.getHours()+":"+dt.getMinutes()+":"+dt.getSeconds());
+ return (dd+"/"+mm+"/"+yy+"  "+dt.getHours()+":"+dt.getMinutes()+":"+dt.getSeconds());
+};
+
+function chgitem(){
+//	settime();
+	$("li:first","#ticker01").text($("#Weather").text());
+	$(wt).trigger("finished");
+}
+
+</script>
+
+<div id="Weather"></div>
+<div id="CssTxt"></div>
+<br/>
+<ul id="ticker01">
+	<li>information 1&nbsp;&nbsp;&nbsp;&nbsp;</li>
+</ul>
+<br/>
+<button onclick="chgitem()">Time</button>
+</body>
+</html>

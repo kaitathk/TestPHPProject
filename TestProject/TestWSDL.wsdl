@@ -1,0 +1,74 @@
+<definitions name="TestService"
+   targetNamespace="http://localhost:8080/TestProject/TestWSDL.wsdl"
+   xmlns="http://schemas.xmlsoap.org/wsdl/"
+   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+   xmlns:tns="http://localhost:8080/TestProject/TestWSDL.wsdl"
+   xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+
+   <types>
+      <xsd:schema 
+      	targetNamespace="http://localhost:8080/TestProject/TestWSDL.wsdl">
+      </xsd:schema>
+   </types>
+ 
+   <message name="TestRequest">
+      <part name="firstName" type="xsd:string"/>
+   </message>
+   <message name="TestResponse">
+      <part name="greeting" type="xsd:string"/>
+   </message>
+
+   <message name="Empty" />
+
+   <portType name="Test_PortType">
+      <operation name="GetTest">
+         <input message="tns:TestRequest"/>
+         <output message="tns:TestResponse"/>
+      </operation>
+      <operation name="GetXML">
+         <input message="tns:Empty"/>
+         <output message="tns:TestResponse"/>
+      </operation>
+   </portType>
+
+   <binding name="TestWSDL_Binding" type="tns:Test_PortType">
+   <soap:binding style="rpc"
+      transport="http://schemas.xmlsoap.org/soap/http"/>
+   <operation name="GetTest">
+      <soap:operation soapAction="GetTest"/>
+      <input>
+         <soap:body
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            namespace="urn:TestProject:GetTest"
+            use="encoded"/>
+      </input>
+      <output>
+         <soap:body
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            namespace="urn:TestProject:GetTest"
+            use="encoded"/>
+      </output>
+   </operation>
+   <operation name="GetXML">
+      <soap:operation soapAction="GetXML"/>
+      <input>
+         <soap:body 
+            use="literal"/>
+      </input>
+      <output>
+         <soap:body
+            encodingStyle="http://schemas.xmlsoap.org/soap/encoding/"
+            namespace="urn:TestProject:GetXML"
+            use="encoded"/>
+      </output>
+   </operation>
+   </binding>
+
+   <service name="GetTestSrv">
+      <documentation>WSDL File for GetTest</documentation>
+      <port binding="tns:TestWSDL_Binding" name="Test_Port">
+         <soap:address
+            location="http://localhost:8080/TestProject/TestServer.php" />
+      </port>
+   </service>
+</definitions>
