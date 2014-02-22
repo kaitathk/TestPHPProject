@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="BIG5" ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=BIG5" />
+<title>Page 1</title>
+
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-1.8.2.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-ui-1.9.0.custom.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery.marquee.js"></script>
+
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui.css" />
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui-1.9.0.custom.min.css" />
+
+<style type="text/css">
+	body, html{margin:0;padding:0;}
+	#display{
+			width:500px;
+			margin-left:auto;
+			margin-right:auto;
+			height:100%;
+			}
+	#warnmsg{
+			overflow:hidden;
+			background-color:#6F370F;
+			color:yellow;
+			font-size:24px;
+			padding-top:3px;
+			padding-bottom:3px;
+			}
+	#Weather{
+			overflow:hidden;
+			background-color:#6F370F;
+			color:yellow;
+			font-size:24px;
+			padding-top:3px;
+			padding-bottom:3px;
+			margin:0px;
+			}
+	#RegTemp{
+			overflow:hidden;
+			background-color:#6F370F;
+			color:yellow;
+			font-size:24px;
+			padding-top:3px;
+			padding-bottom:3px;
+			}
+			 
+</style>
+
+<script type="text/javascript">
+
+$.support.cors = true;
+
+var warnpicline;
+var warnmsgline;
+var templine;
+var regtempline;
+var WeathData;
+
+$(function(){
+
+	config_screen();
+	
+	loadweather();
+	
+	ShowWeather();
+	
+	setInterval(loadweather(),10000);
+	
+})
+
+function loadweather(){
+	var tmp=$.get("http://localhost:8080/weather.xml",
+			 function(data, error, xhr){SetData(data, error, xhr);},
+			 "xml"	
+			 )
+			 .fail(function(xhr,textstatus,error){alert("Loading XML document error - "+xhr.status+" --> Error : "+error);});
+}
+
+function SetData(data, error, xhr){
+	WeathData=data;
+	SetWeather(data);
+	SetRegTemp(data);
+	SetWarnMesg(data);
+	ShowWeather();
+}
+
+function SetWeather(data){
+	templine=$(data).find("header").text()+"&nbsp;&nbsp;&nbsp;&nbsp;"+
+			 $(data).find("temp").text()+"&nbsp;&nbsp;&nbsp;&nbsp;"+
+			 $(data).find("humd").text();
+	$("#Weather").html(templine);
+}
+
+function SetRegTemp(data){
+	regtempline=$(data).find("Region").text();
+	$("#RegTemp").html(regtempline);
+}
+
+function SetWarnMesg(data){
+	if ($(data).find("WarningSignal")){
+		warnmsgline=$(data).find("WarnMsg").text();
+		warnpicline=$(data).find("WarnPic").text();
+		$("#warnmsg").show();
+		$("#warnpic").show();
+	}else
+		{
+		warnmsgline="";
+		warnpicline="";
+		$("#warnmsg").hide();
+		$("#warnpic").hide();
+		}
+	$("#warnmsg").html(warnmsgline);
+	$("#warnpic").html(warnpicline);
+}
+
+function ShowWeather(){
+
+	var wt=$("#Weather").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: false
+	});
+	
+	$(wt).on("finished", function(){
+		$(this).stop()
+//		SetWeather(WeathData);
+		$(this).find('.js-marquee-wrapper').html(templine);
+		$(this).animate();
+		});
+	
+	var wr=$("#RegTemp").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: true
+	});
+	
+	$(wt).on("finished", function(){
+//		SetRegTemp(WeathData);
+		});
+	
+	var wm=$("#warnmsg").marquee({
+		//speed in milliseconds of the marquee
+		speed: 5000,
+		//gap in pixels between the tickers
+		gap: 50,
+		//gap in pixels between the tickers
+		delayBeforeStart: 0,
+		//'left' or 'right'
+		direction: 'left',
+		//true or false - should the marquee be duplicated to show an effect of continues flow
+		duplicated: false
+	});
+	
+	$(wm).on("finished", function(){
+//		SetWarnMesg(WeathData);
+		});
+	
+}
+
+function config_screen(){
+    var windowHeight
+    if (self.innerHeight) { // all except Explorer
+      windowHeight = self.innerHeight;
+    } else if (document.documentElement && document.documentElement.clientHeight) {
+      windowHeight = document.documentElement.clientHeight;
+    } else if (document.body) { // other Explorers
+      windowHeight = document.body.clientHeight;
+    }
+
+    var wh=windowHeight-$("#warnpic").height()-
+    					$("#warnmsg").height()-    
+    					$("#Weather").height()-    
+    					$("#RegTemp").height();
+    $("#wrapper").height(wh);
+}
+</script>
+
+</head>
+<body>
+
+<div id="display">
+<div id="wrapper">&nbsp;</div>
+<div id="warnpic">&nbsp;</div>
+<div id="warnmsg">&nbsp;</div>
+<div id="Weather">&nbsp;</div>
+<div id="RegTemp">&nbsp;</div>
+</div>
+
+</body>
+</html>

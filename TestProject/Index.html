@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+
+<title>Insert title here</title>
+
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-1.8.2.js"></script>
+<script type="text/javascript" language="javascript" charset="utf-8" src="./js/jquery-ui-1.9.0.custom.js"></script>
+
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui.css" />
+<link rel="stylesheet" style="text/css" charset="utf-8" href="./css/jquery-ui-1.9.0.custom.min.css" />
+
+</head>
+<body>
+
+<script>
+
+$(document).ready(function(){
+//	$("#Mydiv")[0].innerHTML=loadXMLDoc("http://rss.weather.gov.hk/rss/CurrentWeather_big5.xml");
+	var tmp=loadXMLDoc("http://rss.weather.gov.hk/rss/CurrentWeather_big5.xml");
+	var tmp1=$("description", $("item", tmp)).text();
+	$("#Mydiv").innerHTML[0]=tmp1;
+})
+
+function loadXMLDoc(dname)
+{
+if (window.XMLHttpRequest)
+  {
+  xhttp=new XMLHttpRequest();
+  }
+else
+  {
+  xhttp=new ActiveXObject("Microsoft.XMLHTTP");
+  }
+xhttp.open("GET",dname,false);
+xhttp.send();
+return xhttp.responseXML;
+}
+
+</script>
+
+<div id="Mydiv">Test</div>
+
+
+</body>
+</html>
