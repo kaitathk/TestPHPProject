@@ -69,7 +69,8 @@ EOD;
 
 $html .= '<br />';
 $html .= '<div> This is a Test Line</div>';
-$html .= '<div style="display : none;"> This is a hidden Test line</div>';
+$html .= '<div style="display:none;"> This is a hidden Test line</div>';
+$html .= '<div></div>';
 
 // Print text using writeHTMLCell()
 //$pdf->writeHTMLCell(0, 0, '', '', $html, 0, 1, 0, true, '', true);
